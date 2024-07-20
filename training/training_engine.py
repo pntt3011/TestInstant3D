@@ -187,6 +187,7 @@ def training_loop(rank, args):
             # torch.cuda.empty_cache()
 
             pose_imgs, pose_depths, pose_norms, triplanes = G_val.valid_rendering(valid_prompts_planes, prompt_embeddings_planes, text_embeds_planes_eot, valid_pose_loader, random_bg=args.random_bg, max_depth=args.max_depth, cur_niter=None)
+            print('Finish render:', time.time())
 
             all_pose_imgs.append(pose_imgs)
             all_pose_depths.append(pose_depths)

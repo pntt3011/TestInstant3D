@@ -14,6 +14,7 @@ ray, and computes pixel colors using the volume rendering equation.
 """
 
 import torch
+import numpy as np
 import time
 
 from training.volumetric_rendering.ray_marcher import MipRayMarcher2
@@ -221,11 +222,6 @@ class ImportanceRenderer(torch.nn.Module):
 
         all_depths, all_colors, all_densities, all_normals = self.unify_samples(depths_coarse, colors_coarse, densities_coarse, normals_coarse,
                                                               depths_fine, colors_fine, densities_fine, normals_fine)
-        
-        current = time.time()
-        print("Sample done " + current)
-        convert_sdf_samples_to_ply(all_densities, [0, 0, 0], 1, f"{current}.ply")
-
 
         # all_depths, all_colors, all_densities, all_normals = self.unify_samples(depths_coarse, colors_coarse, densities_coarse, depths_coarse,
                                                               # depths_fine, colors_fine, densities_fine, depths_fine)

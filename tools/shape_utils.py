@@ -21,21 +21,9 @@ Ex.
 """
 
 
-import time
 import plyfile
-import glob
-import logging
 import numpy as np
-import os
-import random
-import torch
-import torch.utils.data
-import trimesh
 import skimage.measure
-import argparse
-import mrcfile
-from tqdm import tqdm
-
 
 def convert_sdf_samples_to_ply(
     numpy_3d_sdf_tensor,
@@ -54,8 +42,6 @@ def convert_sdf_samples_to_ply(
     :ply_filename_out: string, path of the filename to save to
     This function adapted from: https://github.com/RobotLocomotion/spartan
     """
-    start_time = time.time()
-
     verts, faces, normals, values = np.zeros((0, 3)), np.zeros((0, 3)), np.zeros((0, 3)), np.zeros(0)
     # try:
     verts, faces, normals, values = skimage.measure.marching_cubes(
@@ -98,27 +84,3 @@ def convert_sdf_samples_to_ply(
     ply_data = plyfile.PlyData([el_verts, el_faces])
     ply_data.write(ply_filename_out)
     print(f"wrote to {ply_filename_out}")
-
-
-def convert_mrc(input_filename, output_filename, isosurface_level=1):
-    with mrcfile.open(input_filename) as mrc:
-        convert_sdf_samples_to_ply(np.transpose(mrc.data, (2, 1, 0)), [0, 0, 0], 1, output_filename, level=isosurface_level)
-
-if __name__ == '__main__':
-    start_time = time.time()
-    parser = argparse.ArgumentParser()
-    parser.add_argument('input_mrc_path')
-    parser.add_argument('--level', type=float, default=10, help="The isosurface level for marching cubes")
-    args = parser.parse_args()
-
-    if os.path.isfile(args.input_mrc_path) and args.input_mrc_path.split('.')[-1] == 'ply':
-        output_obj_path = args.input_mrc_path.split('.mrc')[0] + '.ply'
-        convert_mrc(args.input_mrc_path, output_obj_path, isosurface_level=1)
-
-        print(f"{time.time() - start_time:02f} s")
-    else:
-        assert os.path.isdir(args.input_mrc_path)
-
-        for mrc_path in tqdm(glob.glob(os.path.join(args.input_mrc_path, '*.mrc'))):
-            output_obj_path = mrc_path.split('.mrc')[0] + '.ply'
-            convert_mrc(mrc_path, output_obj_path, isosurface_level=args.level)

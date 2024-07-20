@@ -269,7 +269,6 @@ def print_module_summary(module, inputs, max_nesting=3, skip_redundant=True):
 
 
 def load_checkpoint(model, model_ema, checkpoint_path, optimizer=None, loss_scaler_main=None, loss_scaler_reg=None, rank=0):
-    print(type(model))
     if os.path.isfile(checkpoint_path):
         pass
     else:
